@@ -1,24 +1,25 @@
-//
-//  ContentView.swift
-//  Patient-HMS
-//
-//  Created by Krsna Sharma on 04/07/24.
-//
-
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            HomeView()
+                .tabItem {
+                    Image(systemName: "house.fill").background(Color.CustomRed)
+                    Text("Home")
+                }
+
+            Text("Profile View")
+                .tabItem {
+                    Image(systemName: "person.crop.circle")
+                    Text("Profile")
+                }
         }
-        .padding()
     }
 }
 
-#Preview {
-    ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomeView()
+    }
 }

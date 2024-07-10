@@ -7,6 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3013058B2C37FB8A00FB2B73 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3013058A2C37FB8A00FB2B73 /* DataModel.swift */; };
+		3013058D2C37FBA600FB2B73 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3013058C2C37FBA600FB2B73 /* DataController.swift */; };
+		3013058F2C38134800FB2B73 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3013058E2C38134800FB2B73 /* GoogleService-Info.plist */; };
+		30E61C352C38142A00FF1370 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 30E61C342C38142A00FF1370 /* FirebaseAuth */; };
+		30E61C372C38142A00FF1370 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 30E61C362C38142A00FF1370 /* FirebaseFirestore */; };
+		30E61C392C38142A00FF1370 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 30E61C382C38142A00FF1370 /* FirebaseFirestoreSwift */; };
+		30E61C3B2C38142A00FF1370 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 30E61C3A2C38142A00FF1370 /* FirebaseStorage */; };
+		81C039092C37E3DA00A537E6 /* BookAppointmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C039082C37E3DA00A537E6 /* BookAppointmentView.swift */; };
+		89A3C8982C3BD6400000AD9A /* LogInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89A3C8972C3BD6400000AD9A /* LogInView.swift */; };
+		89A3C89A2C3BD6470000AD9A /* CreateAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89A3C8992C3BD6470000AD9A /* CreateAccountView.swift */; };
+		E60A67412C36A342003A5BDD /* CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A67402C36A342003A5BDD /* CustomColors.swift */; };
+		E60A675F2C37ABD3003A5BDD /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A675E2C37ABD3003A5BDD /* HomeView.swift */; };
+		E60A67612C37ABF2003A5BDD /* ScheduledAppointmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A67602C37ABF2003A5BDD /* ScheduledAppointmentView.swift */; };
+		E60A67632C37AC09003A5BDD /* CardiologyDepartmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A67622C37AC09003A5BDD /* CardiologyDepartmentView.swift */; };
+		E60A67652C37AC1C003A5BDD /* DoctorRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A67642C37AC1C003A5BDD /* DoctorRow.swift */; };
+		E60A67672C37AC2F003A5BDD /* DoctorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A67662C37AC2F003A5BDD /* DoctorDetailView.swift */; };
+		E60A676D2C37AC9D003A5BDD /* CalendarDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A676C2C37AC9D003A5BDD /* CalendarDayView.swift */; };
+		E60A676F2C37ACC7003A5BDD /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60A676E2C37ACC7003A5BDD /* Extensions.swift */; };
 		E676C6582C365425000CAE39 /* Patient_HMSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E676C6572C365425000CAE39 /* Patient_HMSApp.swift */; };
 		E676C65A2C365425000CAE39 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E676C6592C365425000CAE39 /* ContentView.swift */; };
 		E676C65C2C365427000CAE39 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E676C65B2C365427000CAE39 /* Assets.xcassets */; };
@@ -14,6 +32,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3013058A2C37FB8A00FB2B73 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
+		3013058C2C37FBA600FB2B73 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		3013058E2C38134800FB2B73 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		81C039082C37E3DA00A537E6 /* BookAppointmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookAppointmentView.swift; sourceTree = "<group>"; };
+		89A3C8972C3BD6400000AD9A /* LogInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInView.swift; sourceTree = "<group>"; };
+		89A3C8992C3BD6470000AD9A /* CreateAccountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateAccountView.swift; sourceTree = "<group>"; };
+		E60A67402C36A342003A5BDD /* CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColors.swift; sourceTree = "<group>"; };
+		E60A675E2C37ABD3003A5BDD /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		E60A67602C37ABF2003A5BDD /* ScheduledAppointmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledAppointmentView.swift; sourceTree = "<group>"; };
+		E60A67622C37AC09003A5BDD /* CardiologyDepartmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardiologyDepartmentView.swift; sourceTree = "<group>"; };
+		E60A67642C37AC1C003A5BDD /* DoctorRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorRow.swift; sourceTree = "<group>"; };
+		E60A67662C37AC2F003A5BDD /* DoctorDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorDetailView.swift; sourceTree = "<group>"; };
+		E60A676C2C37AC9D003A5BDD /* CalendarDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayView.swift; sourceTree = "<group>"; };
+		E60A676E2C37ACC7003A5BDD /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E676C6542C365425000CAE39 /* Patient-HMS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Patient-HMS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E676C6572C365425000CAE39 /* Patient_HMSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Patient_HMSApp.swift; sourceTree = "<group>"; };
 		E676C6592C365425000CAE39 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -26,6 +58,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30E61C352C38142A00FF1370 /* FirebaseAuth in Frameworks */,
+				30E61C3B2C38142A00FF1370 /* FirebaseStorage in Frameworks */,
+				30E61C372C38142A00FF1370 /* FirebaseFirestore in Frameworks */,
+				30E61C392C38142A00FF1370 /* FirebaseFirestoreSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -35,6 +71,7 @@
 		E676C64B2C365425000CAE39 = {
 			isa = PBXGroup;
 			children = (
+				3013058E2C38134800FB2B73 /* GoogleService-Info.plist */,
 				E676C6562C365425000CAE39 /* Patient-HMS */,
 				E676C6552C365425000CAE39 /* Products */,
 			);
@@ -51,8 +88,21 @@
 		E676C6562C365425000CAE39 /* Patient-HMS */ = {
 			isa = PBXGroup;
 			children = (
+				3013058A2C37FB8A00FB2B73 /* DataModel.swift */,
+				3013058C2C37FBA600FB2B73 /* DataController.swift */,
+				89A3C8972C3BD6400000AD9A /* LogInView.swift */,
+				89A3C8992C3BD6470000AD9A /* CreateAccountView.swift */,
 				E676C6572C365425000CAE39 /* Patient_HMSApp.swift */,
 				E676C6592C365425000CAE39 /* ContentView.swift */,
+				E60A676E2C37ACC7003A5BDD /* Extensions.swift */,
+				E60A675E2C37ABD3003A5BDD /* HomeView.swift */,
+				81C039082C37E3DA00A537E6 /* BookAppointmentView.swift */,
+				E60A67622C37AC09003A5BDD /* CardiologyDepartmentView.swift */,
+				E60A67602C37ABF2003A5BDD /* ScheduledAppointmentView.swift */,
+				E60A67642C37AC1C003A5BDD /* DoctorRow.swift */,
+				E60A67662C37AC2F003A5BDD /* DoctorDetailView.swift */,
+				E60A676C2C37AC9D003A5BDD /* CalendarDayView.swift */,
+				E60A67402C36A342003A5BDD /* CustomColors.swift */,
 				E676C65B2C365427000CAE39 /* Assets.xcassets */,
 				E676C65D2C365427000CAE39 /* Preview Content */,
 			);
@@ -83,6 +133,12 @@
 			dependencies = (
 			);
 			name = "Patient-HMS";
+			packageProductDependencies = (
+				30E61C342C38142A00FF1370 /* FirebaseAuth */,
+				30E61C362C38142A00FF1370 /* FirebaseFirestore */,
+				30E61C382C38142A00FF1370 /* FirebaseFirestoreSwift */,
+				30E61C3A2C38142A00FF1370 /* FirebaseStorage */,
+			);
 			productName = "Patient-HMS";
 			productReference = E676C6542C365425000CAE39 /* Patient-HMS.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +167,9 @@
 				Base,
 			);
 			mainGroup = E676C64B2C365425000CAE39;
+			packageReferences = (
+				30E61C332C38142A00FF1370 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = E676C6552C365425000CAE39 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -126,6 +185,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E676C65F2C365427000CAE39 /* Preview Assets.xcassets in Resources */,
+				3013058F2C38134800FB2B73 /* GoogleService-Info.plist in Resources */,
 				E676C65C2C365427000CAE39 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,8 +197,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E60A67612C37ABF2003A5BDD /* ScheduledAppointmentView.swift in Sources */,
 				E676C65A2C365425000CAE39 /* ContentView.swift in Sources */,
+				E60A67672C37AC2F003A5BDD /* DoctorDetailView.swift in Sources */,
+				E60A67652C37AC1C003A5BDD /* DoctorRow.swift in Sources */,
+				E60A675F2C37ABD3003A5BDD /* HomeView.swift in Sources */,
+				3013058B2C37FB8A00FB2B73 /* DataModel.swift in Sources */,
+				E60A676F2C37ACC7003A5BDD /* Extensions.swift in Sources */,
+				E60A67412C36A342003A5BDD /* CustomColors.swift in Sources */,
+				89A3C8982C3BD6400000AD9A /* LogInView.swift in Sources */,
+				89A3C89A2C3BD6470000AD9A /* CreateAccountView.swift in Sources */,
+				3013058D2C37FBA600FB2B73 /* DataController.swift in Sources */,
 				E676C6582C365425000CAE39 /* Patient_HMSApp.swift in Sources */,
+				E60A67632C37AC09003A5BDD /* CardiologyDepartmentView.swift in Sources */,
+				E60A676D2C37AC9D003A5BDD /* CalendarDayView.swift in Sources */,
+				81C039092C37E3DA00A537E6 /* BookAppointmentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,7 +270,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -254,7 +327,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -280,12 +353,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.hms.Patient-HMS";
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.HMS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -309,12 +383,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.hms.Patient-HMS";
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.HMS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -344,6 +419,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		30E61C332C38142A00FF1370 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.28.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		30E61C342C38142A00FF1370 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30E61C332C38142A00FF1370 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		30E61C362C38142A00FF1370 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30E61C332C38142A00FF1370 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		30E61C382C38142A00FF1370 /* FirebaseFirestoreSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30E61C332C38142A00FF1370 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestoreSwift;
+		};
+		30E61C3A2C38142A00FF1370 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30E61C332C38142A00FF1370 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E676C64C2C365425000CAE39 /* Project object */;
 }
