@@ -1,18 +1,15 @@
-//
-//  BookAppointmentView.swift
-//  Patient-HMS
-//
-//  Created by IOS on 05/07/24.
-//
-
 import SwiftUI
 
 struct SearchView: View {
     @State private var searchText = ""
+    @State private var showAlert = false
+    @State private var showSecondAlert = false
+    @State private var selectedLabTestName: String = ""
+    @State private var selectedLabTestPrice: Int = 0
+    
     let doctors = ["Dr. Rahul Verma", "Dr. Smith", "Dr. John Doe"]
     
-   
-    let departments = [("General", "General_Physician"),("Cardiology", "heart_Image"), ("Nurology", "Neurology"),("Pediatrics", "Pediatrics"),("Dermatology", "Dermatology"),("Ophthalmology", "Eye")]
+    let departments = [("General", "General_Physician"),("Cardiology", "heart_Image"), ("Neurology", "Neurology"),("Pediatrics", "Pediatrics"),("Dermatology", "dermatology"),("Ophthalmology", "Eye")]
     
     var filteredDoctors: [String] {
         if searchText.isEmpty {
@@ -32,11 +29,18 @@ struct SearchView: View {
 
     var body: some View {
         ZStack {
-//            Color("backgroundColor")
-//                .ignoresSafeArea()
+            Image("blob4")
+                .aspectRatio(contentMode: .fit)
+                .frame(width: UIScreen.main.bounds.width, height: 300)
+                .offset(x: UIScreen.main.bounds.width / 1.4, y: -UIScreen.main.bounds.height / 10)
+            
+//            Image("blob5")
+//                .aspectRatio(contentMode: .fill)
+//                .frame(width: UIScreen.main.bounds.width, height: 300)
+//                .offset(x: UIScreen.main.bounds.width / 35, y: UIScreen.main.bounds.height / 2)
 
             ScrollView {
-                VStack(alignment: .leading) {
+                
                     SearchBar(searchText: $searchText)
                     
                     if !searchText.isEmpty {
@@ -52,51 +56,78 @@ struct SearchView: View {
                             }
                             if !filteredDepartments.isEmpty {
                                 SectionHeader(title: "Departments")
+                                    
                                 DepartmentScrollView(items: filteredDepartments)
+                                
+                                
                             }
                         }
                     } else {
-                        SectionHeader(title: "Recently Visited")
-//                        HorizontalScrollView(items: Array(repeating: "Dr. Rahul Verma", count: 5))
-//                            .padding(.top, 5)
-
                         SectionHeader(title: "Departments")
+                            .padding(.leading, 20)
+                            .padding(.top, 20)
                         DepartmentScrollView(items: departments)
-
-                        SectionHeader(title: "Recommend Doctors")
-//                        HorizontalScrollView(items: Array(repeating: "Dr. Rahul Verma", count: 5))
                         
-                        SectionHeader(title: "Recommend Tests")
-                        HorizontalScrollView(items: DataController.shared.labId)
+                        
+                        SectionHeader(title: "Lab tests")
+                            .padding(.leading, 20)
+                        HorizontalRowView(items: DataController.shared.labId, selectedLabTestName: $selectedLabTestName, selectedLabTestPrice: $selectedLabTestPrice) {
+                            // Toggle showAlert to true
+                            showAlert.toggle()
+                        }
+                        .alert(isPresented: $showAlert) {
+                            Alert(
+                                title: Text("Confirm Booking"),
+                                message: Text("Are you sure you want to book \(selectedLabTestName) for \(selectedLabTestPrice) price?"),
+                                primaryButton: .default(Text("Yes")) {
+                                    // Handle booking confirmation logic here
+                                    print("Booking confirmed for \(selectedLabTestName) at \(selectedLabTestPrice)")
+                                },
+                                secondaryButton: .cancel(Text("No"))
+                            )
+                        }
+                       
+                        
                     }
-                }
-                .padding()
-                .padding(.top, 5)
+                
             }
+            
+            .padding(.horizontal, 0) // side hiding issue solved
+            
             .navigationBarTitle("Book Appointment")
             .toolbarTitleDisplayMode(.inline)
+            
+            
         }
+        
     }
+    
+    
 }
 
 struct SearchBar: View {
     @Binding var searchText: String
     
     var body: some View {
-        HStack {
+//        HStack {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
                 TextField("Search for Doctor or Department", text: $searchText)
                     .foregroundColor(.black)
             }
-            .padding(7)
+            .padding(10)
             .padding(.horizontal, 10)
             .background(Color(.systemGray4).opacity(0.5))
-            .cornerRadius(8)
-            .padding(.horizontal, 10)
-        }
+            .cornerRadius(10)
+            .frame(width: 361, height: 35)
+            
+//        }
+        .padding(.top, 30) // Adjust top padding to shift the search bar down
+                .padding(.horizontal)
     }
+    
+    
 }
 
 struct SectionHeader: View {
@@ -106,13 +137,10 @@ struct SectionHeader: View {
         HStack {
             Text(title)
                 .font(.headline)
+                
             Spacer()
-            NavigationLink(destination: Text("See All")) {
-                Text("See All")
-                    .foregroundColor(Color("brandPrimary"))
-            }
         }
-        .padding(.vertical, 5)
+        .padding(.vertical, 10)
     }
 }
 
@@ -121,35 +149,17 @@ struct HorizontalScrollView: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 15) {
+            HStack(spacing: 8) {
                 ForEach(items, id: \.self) { item in
-                    NavigationLink(destination: DetailView(name: item)) {
-                        VStack {
-                            Image(item)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 50, height: 60)
-                                .foregroundColor(.black)
-                            
-                            Text(DataController.shared.labTests[item]!.name)
-                                .font(.headline)
-                                .padding([.top, .leading, .trailing], 10)
-                                .foregroundColor(.black)
-                            
-                            Text("\(DataController.shared.labTests[item]!.price)")
-                                .font(.subheadline)
-                                .padding([.leading, .bottom, .trailing], 9)
-                                .foregroundColor(.black)
-                        }
-                        .frame(width: 160, height: 190)
+                    
+                    Text(item)
+                        .padding()
                         .background(Color.white)
                         .cornerRadius(10)
                         .shadow(radius: 2)
-                        .padding(.vertical, 5)
-                    }
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, 0)
         }
         .padding(.vertical)
     }
@@ -172,7 +182,7 @@ struct DepartmentScrollView: View {
                             Text(item.0)
                                 .font(.subheadline)
                                 .multilineTextAlignment(.center)
-                                .padding(.horizontal, 5)
+                                .padding(.horizontal, 10)
                                 .padding(.top, 1)
                                 .foregroundColor(.black)
                         }
@@ -180,21 +190,55 @@ struct DepartmentScrollView: View {
                         .background(Color.white)
                         .cornerRadius(10)
                         .shadow(radius: 2)
-                        .padding(.vertical, 5)
+                        .padding(.vertical, 10)
                     }
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, 15)
         }
-        .padding(.vertical)
+        .padding(.vertical, 0)
     }
+        
 }
 
-struct DetailView: View {
-    var name: String
+struct HorizontalRowView: View {
+    var items: [String]
+    @Binding var selectedLabTestName: String
+    @Binding var selectedLabTestPrice: Int
+    var onTap: () -> Void
     
     var body: some View {
-        Text("Details for \(name)")
+        VStack(alignment: .leading, spacing: 15) {
+            ForEach(items, id: \.self) { item in
+                Button(action: {
+                    if let labTest = DataController.shared.labTests[item] {
+                        selectedLabTestName = labTest.name
+                        selectedLabTestPrice = Int(Double(labTest.price))
+                        onTap() // Call onTap closure to toggle showAlert
+                    }
+                }) {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(DataController.shared.labTests[item]?.name ?? "")
+                                .font(.subheadline)
+                                .foregroundColor(.black)
+                            Text("\(DataController.shared.labTests[item]?.price ?? 0)")
+                                .font(.subheadline)
+                                .foregroundColor(.black)
+                        }
+                        Spacer()
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(10)
+                    .shadow(radius: 2)
+                    .padding(.vertical, 5)
+                    .padding(.leading, 12)
+                    .padding(.trailing, 12)
+                    .padding(.horizontal, 12)
+                }
+            }
+        }
     }
 }
 
@@ -203,3 +247,4 @@ struct SearchView_Previews: PreviewProvider {
         SearchView()
     }
 }
+

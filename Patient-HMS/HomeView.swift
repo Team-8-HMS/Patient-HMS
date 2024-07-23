@@ -1,13 +1,23 @@
+
+///Original file
+
 import SwiftUI
+import Firebase
 
 struct HomeView: View {
     @State private var isShowingOverlay = false
+    @State private var isShowingOverlayProfile = false
     @State private var showAlert = false
     @State private var isRescheduling = false
     @State private var isAppointmentCancelled = false
     @State private var appointmentDate = Date()
     @State private var appointmentTimeSlot: String? = "10:00 - 11:00 am"
     @State private var showPaymentPopup = false
+    @StateObject var viewModel = AppointmentCard()
+    @State private var isloggedOut : Bool = false
+    
+    var patientId = currentuser.id
+    @ObservedObject var patientService = PatientFirestoreService()
     
     var body: some View {
         NavigationView {
@@ -16,101 +26,149 @@ struct HomeView: View {
                 Color("backgroundColor")
                     .ignoresSafeArea()
                 
+                // Add blobs as background images
+                ZStack {
+                    Image("blob1")
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: UIScreen.main.bounds.width, height: 300)
+                        .offset(x: UIScreen.main.bounds.width / 2, y: -UIScreen.main.bounds.height / 2.5)
+                    
+                    Image("blob2")
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: UIScreen.main.bounds.width, height: 300)
+                        .offset(x: -UIScreen.main.bounds.width / 1, y: UIScreen.main.bounds.height / 4.3)
+                        .position(x: 170, y: 350)
+                    
+                    Image("blob3")
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: UIScreen.main.bounds.width, height: 300)
+                        .offset(x: UIScreen.main.bounds.width / 1.7, y: UIScreen.main.bounds.height / 4)
+                    
+                    Image("blob3")
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: UIScreen.main.bounds.width, height: 300)
+                        .offset(x: UIScreen.main.bounds.width / 1.7, y: UIScreen.main.bounds.height / 4)
+                }
+         
                 ScrollView {
+                    HStack {
+                        Text("Home")
+                                                    .font(.largeTitle)
+                                                    .fontWeight(.bold)
+                                                
+                                                Spacer()
+                                                
+                                                Button(action: {
+                                                    isShowingOverlayProfile = true
+                                                }) {
+                                                    if let profileImage = patientService.profileImage {
+                                                        Image(uiImage: profileImage)
+                                                            .resizable()
+                                                            .frame(width: 40, height: 40)
+                                                            .clipShape(Circle())
+                                                            .padding()
+                                                    } else {
+                                                        Image(systemName: "person.crop.circle.fill")
+                                                            .frame(width: 40, height: 40)
+                                                            .font(.title)
+                                                            .foregroundColor(.primary)
+                                                            .padding()
+                                                    }
+                                                }
+                                            }
+                                            .padding()
+                                            .sheet(isPresented: $isShowingOverlayProfile) {
+                                                ProfileView()
+                                            }
+                                            .onAppear {
+                                                patientService.fetchCurrentUserProfile()
+                                            }
                     VStack {
-                        GroupBox {
-                            if isAppointmentCancelled {
-                                VStack {
-                                    Text("+ No Upcoming Appointment")
-                                        .font(.headline)
-                                        .padding()
-                                }
-                                .frame(maxWidth: .infinity, minHeight: 100)
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(25)
-                                .padding()
-                            } else {
-                                VStack(alignment: .leading, spacing: 16) {
-                                    Text("Upcoming Appointment")
-                                    
-                                    HStack {
-                                        Image(systemName: "person.crop.circle.fill")
-                                            .resizable()
-                                            .frame(width: 60, height: 60)
-                                            .clipShape(Circle())
-                                            .padding(.trailing, 8)
+                        Spacer().frame(height: 20)
+                        if !isAppointmentCancelled, let appointment = viewModel.newAppointements.first {
+                            ZStack {
+                                GroupBox {
+                                    VStack(alignment: .leading, spacing: 16) {
+                                        Text("Upcoming Appointment")
                                         
-                                        VStack(alignment: .leading) {
-                                            Text("Dr. Anjali Jaiswal, MD")
-                                                .font(.headline)
-                                            
-                                            Text("Dermatologist")
-                                                .font(.subheadline)
-                                        }
-                                    }
-                                    .padding(.vertical, 3)
-                                    
-                                    HStack {
                                         HStack {
-                                            Image(systemName: "clock.fill")
-                                                .foregroundColor(.white)
+                                            Image(systemName: "person.crop.circle.fill")
+                                                .resizable()
+                                                .frame(width: 60, height: 60)
+                                                .clipShape(Circle())
+                                                .padding(.trailing, 8)
                                             
-                                            Text(appointmentDate, style: .date)
-                                                .foregroundColor(.white)
-                                                .font(.system(size: 11.5, weight: .bold))
-                                                .lineLimit(1)
-                                            Spacer()
+                                            VStack(alignment: .leading) {
+                                                Text(viewModel.doctorDetail.first?.first ?? "Name not found")
+                                                    .font(.headline)
+                                                
+                                                Text(viewModel.doctorDetail.first?.last ?? "")
+                                                    .font(.subheadline)
+                                            }
+                                        }
+                                        .padding(.vertical, 3)
+                                        
+                                        HStack {
+                                            HStack {
+                                                Image(systemName: "clock.fill")
+                                                    .foregroundColor(.white)
+                                                
+                                                Text(appointment.date)
+                                                    .foregroundColor(.white)
+                                                    .font(.system(size: 11.5, weight: .bold))
+                                                    .lineLimit(1)
+                                                Spacer()
+                                                Image(systemName: "calendar")
+                                                    .foregroundColor(.white)
+                                                Text(appointment.timeSlot)
+                                                    .foregroundColor(.white)
+                                                    .font(.system(size: 10.6, weight: .bold))
+                                            }
+                                            .padding()
+                                            .padding(.vertical, 1)
+                                            .background(Color.black)
+                                            .cornerRadius(10)
+                                            .frame(height: 70)
+                                        }
+                                    }
+                                    .padding(3)
+                                    .gesture(
+                                        LongPressGesture(minimumDuration: 0.5)
+                                            .onEnded { _ in
+                                                isShowingOverlay = true
+                                            }
+                                    )
+                                    .contextMenu {
+                                        Button(action: {
+                                            showAlert = true
+                                        }) {
+                                            Text("Cancel")
+                                            Image(systemName: "trash")
+                                        }
+                                        Button(action: {
+                                            isRescheduling = true
+                                        }) {
+                                            Text("Reschedule")
                                             Image(systemName: "calendar")
-                                                .foregroundColor(.white)
-                                            Text(appointmentTimeSlot ?? "")
-                                                .foregroundColor(.white)
-                                                .font(.system(size: 10.6, weight: .bold))
                                         }
-                                        .padding()
-                                        .padding(.vertical, 1)
-                                        .background(Color.black)
-                                        .cornerRadius(10)
-                                        .frame(height: 70)
-                                    }
-                                }
-                                .padding(3)
-                                .gesture(
-                                    LongPressGesture(minimumDuration: 0.5)
-                                        .onEnded { _ in
-                                            isShowingOverlay = true
-                                        }
-                                )
-                                .contextMenu {
-                                    Button(action: {
-                                        showAlert = true
-                                    }) {
-                                        Text("Cancel")
-                                        Image(systemName: "trash")
-                                    }
-                                    Button(action: {
-                                        isRescheduling = true
-                                    }) {
-                                        Text("Reschedule")
-                                        Image(systemName: "calendar")
                                     }
                                 }
                             }
+                            .background(
+                                RoundedRectangle(cornerRadius: 25, style: .continuous)
+                            )
+                            .padding()
+                            .shadow(color: .gray.opacity(0.2), radius: 10, x: 0, y: 5)
                         }
-                        .background(
-                            RoundedRectangle(cornerRadius: 25, style: .continuous)
-                        )
-                        .padding()
-                        .shadow(color: .gray.opacity(0.2), radius: 10, x: 0, y: 5)
-                        
+                       
                         HStack(spacing: 17) {
                             NavigationLink(destination: SearchView()) {
                                 VStack {
                                     Image("DoctorImage")
                                         .resizable()
-                                        .frame(width: 120, height: 120)
-                                        .foregroundColor(.blue)
+                                        .frame(width: 110, height: 120)
                                         .padding()
-                                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
                                     
                                     Text("Book Appointment")
                                         .font(.headline)
@@ -119,81 +177,105 @@ struct HomeView: View {
                                         .padding(.top, -13)
                                 }
                                 .frame(maxWidth: .infinity)
-                                .background(Color.gray.opacity(0.1))
+                                .background(Color(.systemGray6))
                                 .cornerRadius(15)
                             }
-                            
-                            VStack {
-                                Image("VideoCall")
-                                    .resizable()
-                                    .frame(width: 100, height: 120)
-                                    .padding()
-                                    .onTapGesture {
-                                        showPaymentPopup = true
-                                    }
-                                
-                                Text("Instant Consult")
-                                    .font(.headline)
-                                    .padding(.bottom, 8)
-                                    .padding(.top, -13)
+                            NavigationLink(destination: InstantConsultView()) {
+                                VStack {
+                                    Image("VideoCall")
+                                        .resizable()
+                                        .frame(width: 120, height: 120)
+                                        .padding()
+                                        .onTapGesture {
+                                            showPaymentPopup = true
+                                        }
+                                    
+                                    Text("Instant Consult")
+                                        .font(.headline)
+                                        .padding(.bottom, 8)
+                                        .padding(.top, -13)
+                                        .foregroundColor(.black)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(15)
                             }
-                            .frame(maxWidth: .infinity)
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(15)
+                                
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
                             .shadow(color: .gray.opacity(0.2), radius: 10, x: 0, y: 5)
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 8)
+                        
+                            
                         
                         GroupBox {
                             VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text("Medical Records")
-                                        .font(.headline)
-                                        .padding(.bottom, 3)
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.gray)
+                                NavigationLink(destination: MedicalRecordView()) {
+                                    HStack {
+                                        Text("Medical Records")
+                                            .font(.headline)
+                                            .padding(.bottom, 3)
+                                            .foregroundColor(.black)
+                                        
+                                        Spacer()
+                                        
+                                        Image(systemName: "chevron.right")
+                                            .foregroundColor(.gray)
+                                    }
+                                    .padding()
                                 }
-                                .padding()
                                 
                                 Divider()
                                 
-                                HStack {
-                                    Text("Lab Records")
-                                        .font(.headline)
-                                        .padding(.bottom, 3)
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.gray)
-                                }
-                                .padding()
                                 
-                                Divider()
-                                
-                                HStack {
-                                    Text("Medical Bills")
-                                        .font(.headline)
-                                        .padding(.bottom, 3)
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.gray)
+                                NavigationLink(destination: PrescriptionsView()) {
+                                    HStack {
+                                        Text("Prescription")
+                                            .font(.headline)
+                                            .padding(.bottom, 3)
+                                            .foregroundColor(.black)
+                                        Spacer()
+                                        Image(systemName: "chevron.right")
+                                            .foregroundColor(.gray)
+                                    }
+                                    .padding()
                                 }
-                                .padding()
+                                
+                                
+                                
+//                                NavigationLink(destination: LogInView(), isActive: $isloggedOut){
+//                                    EmptyView()
+//                                }
+//                                Button(action: {
+//                                    do {
+//                                        try Auth.auth().signOut()
+//                                        isloggedOut = true
+//                                    }catch{
+//                                        print("Error")
+//                                    }
+//
+//                                }, label: {
+//                                    Text("Sign Out")
+//                                        .font(.headline)
+//                                        .padding(.bottom, 3)
+//                                        .padding(.top, 9)
+//                                        .padding(.leading, 17)
+//                                        .foregroundColor(Color("Color 1"))
+//                                })
+                               
                             }
+                            
                         }
                         .background(
                             RoundedRectangle(cornerRadius: 25, style: .continuous)
                                 .fill(Color.gray.opacity(0.1))
                         )
                         .padding()
-                        .shadow(color: .gray.opacity(0.2), radius: 10, x: 0, y: 5)
+                        
+                        .shadow(color: .gray.opacity(0.2), radius: 10, x: 0, y: 5)/*/Users/ios/Downloads/Patient-HMS 6/Patient-HMS/HomeView.swift*/
                         
                         Spacer()
                     }
-                    .navigationTitle("Home")
                 }
             }
         }
@@ -203,6 +285,9 @@ struct HomeView: View {
                 title: Text("Confirm Cancellation"),
                 message: Text("Are you sure you want to cancel the appointment?"),
                 primaryButton: .destructive(Text("Cancel")) {
+                    guard var id = viewModel.newAppointements.first?.id else{return}
+                                            Firestore.firestore().collection("Appointements").document(id).delete()
+                    
                     isAppointmentCancelled = true
                 },
                 secondaryButton: .cancel()
@@ -217,30 +302,134 @@ struct HomeView: View {
     }
 }
 
+
 struct PaymentView: View {
     @Binding var isPresented: Bool
-
+    @State private var showPaymentConfirmation = false
+    @State private var showFaceTimeScreen = false
+    @State private var paymentAmount: String = "₹500"
+    
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Payment Initiated")
-                .font(.title)
+        NavigationView {
+            VStack {
+                // Title Section
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Instant Consult 24/7 ")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                }
+                .padding([.leading, .top])
+                                
+                                Spacer()
+                                    .frame(height: 50)
+                
+                //Info
+                
+                VStack(alignment: .leading, spacing: 8) {
+//                                    Text("")
+//                                        .font(.headline)
+//                                        .padding(.bottom, 4)
+//
+                                    Text("You can get Quick and reliable access to emergency medical care through video consultations with qualified doctors.")
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
+                                        .padding(.bottom, 20)
+                                }
+                                .padding(.horizontal)
+                
+                                 Divider()
+                
+                // Consultation Options Section
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Single online consultation")
+                            .font(.headline)
+                        
+                        Spacer()
+                        
+                        Text("₹ 500")
+                            .font(.headline)
+                    }
+                    
+                    Text("Video consultation ")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                    
+//                    Text("₹ 649.00")
+//                        .font(.subheadline)
+//                        .foregroundColor(.gray)
+//                        .strikethrough()
+                    
+                    
+                }
+                .padding(.horizontal)
                 .padding()
-
-            FacetimeButton(address: "krushna2483@gmail.com")
-
-            Button(action: {
-                isPresented = false
-            }) {
-                Text("OK")
-                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                // Payment Section
+                VStack {
+                    Button(action: {
+                        showPaymentConfirmation = true
+                    }) {
+                        Text("\(paymentAmount) | Pay & Consult")
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color("Color 1"))
+                            .cornerRadius(10)
+                    }
                     .padding()
-                    .background(Color.blue)
-                    .cornerRadius(10)
+                }
+                .alert(isPresented: $showPaymentConfirmation) {
+                    Alert(
+                        title: Text("Confirm Payment"),
+                        message: Text("Do you want to confirm the payment?"),
+                        primaryButton: .default(Text("Yes")) {
+                            showFaceTimeScreen = true
+                        },
+                        secondaryButton: .cancel(Text("Cancel"))
+                    )
+                }
+            }
+           
+            .onAppear {
+                fetchPaymentAmount()
+            }
+            .sheet(isPresented: $showFaceTimeScreen) {
+                FaceTimeView()
             }
         }
-        .padding()
+        .padding(/*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
+    }
+
+    func fetchPaymentAmount() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.paymentAmount = "₹500"
+        }
     }
 }
+//    var body: some View {
+//        VStack(spacing: 20) {
+//            Text("Payment Initiated")
+//                .font(.title)
+//                .padding()
+//
+//            FacetimeButton(address: "krushna2483@gmail.com")
+//
+//            Button(action: {
+//                isPresented = false
+//            }) {
+//                Text("OK")
+//                    .foregroundColor(.white)
+//                    .padding()
+//                    .background(Color.blue)
+//                    .cornerRadius(10)
+//            }
+//        }
+//        .padding()
+//    }
+
 
 struct RescheduleView: View {
     @Binding var selectedDate: Date
@@ -340,5 +529,11 @@ struct FacetimeButton: View {
         
         openURL(url)
         print("Attempting to call \(to) via FaceTime")
+    }
+}
+
+struct HomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomeView()
     }
 }

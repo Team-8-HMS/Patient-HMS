@@ -10,20 +10,23 @@ struct DoctorDetailView: View {
     @State private var selectedDate: Date = Date()
     @State private var patientName: String = ""
     @State private var patientAge: String = ""
-//
+
     let doctor: Doctor
     
     
     
-//
+
     var dateRange: ClosedRange<Date> {
         let today = Calendar.current.startOfDay(for: Date())
         let sevenDaysFromNow = Calendar.current.date(byAdding: .day, value: 7, to: today)!
         return today...sevenDaysFromNow
     }
-//
+
     var body: some View {
         ScrollView {
+            Color("backgroundColor")
+                .ignoresSafeArea()
+            
             VStack(alignment: .leading, spacing: 20) {
                 DoctorHeaderView(doctor: doctor)
                 DoctorInfoView(doctor: doctor)
@@ -41,8 +44,7 @@ struct DoctorDetailView: View {
         .background(Color.gray.opacity(0.1))
     }
 }
-//
-//
+
 struct DoctorHeaderView: View {
     let doctor: Doctor
 
@@ -73,35 +75,34 @@ struct DoctorHeaderView: View {
                         
                 }
         }
-        .padding(.horizontal)
+        .padding()
     }
 }
-//
-//
+
 struct DoctorInfoView: View {
     let doctor: Doctor
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            InfoRow(label: "Experience:", value: "\(doctor.yearsOfExperience)")
-            InfoRow(label: "Certification:", value: doctor.profile.qualifications)
-            InfoRow(label: "Consultation Fee:", value: "₹ \(doctor.profile.appointmentPrice)")
-            InfoRow(label: "Timings:", value: "\(doctor.availableSlots.startTime) - \(doctor.availableSlots.endTime)")
+        HStack {
+            VStack(alignment: .leading, spacing: 8) {
+                InfoRow(label: "Experience:", value: "\(doctor.yearsOfExperience)")
+                InfoRow(label: "Certification:", value: doctor.profile.qualifications)
+                InfoRow(label: "Consultation Fee:", value: "₹ \(doctor.profile.appointmentPrice)")
+                InfoRow(label: "Timings:", value: "\(doctor.availableSlots.startTime) - \(doctor.availableSlots.endTime)")
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.white)
+                    .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 5)
+            )
+            .padding(.horizontal, 14)
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.white)
-                .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 5)
-        )
-        .padding(.horizontal)
+        .padding(.horizontal, 14)
     }
-    
-    
-    
 }
-//
-//
+
+
 struct InfoRow: View {
     let label: String
     let value: String
@@ -115,8 +116,7 @@ struct InfoRow: View {
         }
     }
 }
-//
-//
+
 struct SectionTitleView: View {
     let title: String
 
@@ -126,10 +126,7 @@ struct SectionTitleView: View {
             .padding(.vertical, 8)
     }
 }
-//
-//
-//
-//
+
 struct AppointmentBookingView: View {
     let doctor: Doctor
     @Binding var selectedTimeSlot: String
@@ -146,7 +143,12 @@ struct AppointmentBookingView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            SectionTitleView(title: "Book Appointment")
+            SectionTitleView(title: "Book Appointment").frame()
+           
+                .font(.headline)
+                .padding()
+            
+                .padding(.top, -24)
             
             DatePickerView(selectedDate: $selectedDate)
             
@@ -169,10 +171,10 @@ struct AppointmentBookingView: View {
                 .fill(Color.white)
                 .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 5)
         )
+        
 //        .padding(.horizontal)
     }
 }
-
 
 struct DatePickerView: View {
     @Binding var selectedDate: Date
@@ -183,11 +185,40 @@ struct DatePickerView: View {
     }
 
     var body: some View {
-        DatePicker("Select Date", selection: $selectedDate, in: dateRange, displayedComponents: .date)
-            .datePickerStyle(GraphicalDatePickerStyle())
+        VStack(alignment: .leading) {
+            HStack {
+                Text("Select Date")
+                
+                    .font(.headline)
+                    .padding(.top, -10)
+
+                DatePicker("", selection: $selectedDate, in: dateRange, displayedComponents: .date)
+                    .datePickerStyle(.compact)
+                    .padding(.trailing)
+                    
+                
+                
+            }
             .padding()
+        }
     }
 }
+
+
+//struct DatePickerView: View {
+//    @Binding var selectedDate: Date
+//    var dateRange: ClosedRange<Date> {
+//        let today = Calendar.current.startOfDay(for: Date())
+//        let sevenDaysFromNow = Calendar.current.date(byAdding: .day, value: 7, to: today)!
+//        return today...sevenDaysFromNow
+//    }
+//
+//    var body: some View {
+//        DatePicker("Select Date", selection: $selectedDate, in: dateRange, displayedComponents: .date)
+//            .datePickerStyle(GraphicalDatePickerStyle())
+//            .padding()
+//    }
+//}
 
 
 
@@ -250,22 +281,18 @@ struct TimeSlotView: View {
         }) {
             Text(time)
                 .frame(width: 110, height: 50) // Adjust as needed
-                .background(isSelected ? Color.accentColor : Color.white)
+                .background(isSelected ? Color("Color 1") : Color.white)
                 .foregroundColor(isSelected ? .white : .black)
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.accentColor, lineWidth: isSelected ? 2 : 1)
+                        .stroke(Color.black, lineWidth: isSelected ? 2 : 1)
                 )
-                .shadow(radius: 5)
+//                .shadow(radius: 2)
                 .padding()
         }
     }
 }
-
-
-
-
 
 struct BookButtonView: View {
     let doctor: Doctor
@@ -273,33 +300,41 @@ struct BookButtonView: View {
     @Binding var selectedTimeSlot: String
     @Binding var patientName: String
     @Binding var patientAge: String
-//    @Binding var appointments: [Appointment]
 
     var body: some View {
-        Button("Book Visit") {
-            let appointmentDetails = "Your appointment with \(doctor.name) on \(selectedDate.formatted) at \(selectedTimeSlot) has been scheduled."
-            print(appointmentDetails)
-            
+        VStack {
+            Button(action: {
+                let appointmentDetails = "Your appointment with \(doctor.name) on \(selectedDate.formatted) at \(selectedTimeSlot) has been scheduled."
+                print(appointmentDetails)
 
-            let alert = UIAlertController(
-                title: "Appointment Scheduled",
-                message: "Your appointment with \(doctor.name) on \(selectedDate.formatted) at \(selectedTimeSlot) has been scheduled.",
-                preferredStyle: .alert
-            )
-            let newappointment = Appointment(id: "\(UUID())", patientId: currentuser.id, doctorId: doctor.id, date: selectedDate.formatted, timeSlot: selectedTimeSlot, isPremium: false)
-            var newAppointementData = newappointment.toDictionary()
-            let db = Firestore.firestore()
-            db.collection("Appointements").document("\(newappointment.id)").setData(newAppointementData)
-            
-            selectedTimeSlot = ""
-            patientName = ""
-            patientAge = ""
-            
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true, completion: nil)
+                let alert = UIAlertController(
+                    title: "Appointment Scheduled",
+                    message: "Your appointment with \(doctor.name) on \(selectedDate.formatted) at \(selectedTimeSlot) has been scheduled.",
+                    preferredStyle: .alert
+                )
+
+                let newappointment = Appointment(id: "\(UUID())", patientId: currentuser.id, doctorId: doctor.id, date: selectedDate.formatted, timeSlot: selectedTimeSlot, isPremium: false)
+                let newAppointmentData = newappointment.toDictionary()
+                let db = Firestore.firestore()
+                db.collection("Appointements").document("\(newappointment.id)").setData(newAppointmentData)
+
+                selectedTimeSlot = ""
+                patientName = ""
+                patientAge = ""
+
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true, completion: nil)
+            }) {
+                Text("Book Now")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(width: UIScreen.main.bounds.width - 50, height: 50)
+                    .background(Color("Color 1"))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+            }
+            .padding(.top)
         }
-        .buttonStyle(.borderedProminent)
-        .padding()
     }
 }
 
@@ -358,8 +393,8 @@ struct BookButtonView: View {
 //
 //
 //
-//struct test_Previews: PreviewProvider {
+//struct DoctorDetailView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        TimeslotGridView(selectedTimeSlot: "")
+//        DoctorDetailView(doctor: )
 //    }
 //}

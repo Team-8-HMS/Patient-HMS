@@ -1,9 +1,9 @@
 import Foundation
 struct Patient {
     var id :String
-    var FirstName: String
-    var LastName:String
-    var image:String
+    var firstname: String
+    var lastname:String
+    var imageURL:String
     var dob: Date
     var gender: String
     var contactNumber: String
@@ -17,12 +17,14 @@ struct Patient {
     var previousDoctors: [String]
     
     
+    
+    
     func toDictionary() -> [String: Any] {
         var dict: [String: Any] = [
             "id":id,
-            "FirstName": FirstName,
-            "LastName":LastName,
-            "image":image,
+            "firstname": firstname,
+            "lastname":lastname,
+            "imageURL":imageURL,
              "dob": dob,
              "gender": gender,
              "contactNumber": contactNumber,
@@ -33,6 +35,10 @@ struct Patient {
         ]
         return dict
     }
+}
+struct LivePrescriptions:Identifiable{
+    var id :String
+    var image:String?
 }
 
 struct DoctorProfile :Decodable{

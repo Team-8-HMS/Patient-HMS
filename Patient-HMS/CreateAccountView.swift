@@ -1,7 +1,7 @@
 import SwiftUI
-import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 
 struct ImagePicker: UIViewControllerRepresentable {
     class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
@@ -42,34 +42,58 @@ struct ImagePicker: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
 }
 
-
-
 struct CreateAccountView: View {
     @State private var firstName: String = ""
     @State private var lastName: String = ""
-    @State private var gender: String = "Male"
+    @State private var gender: String = "Select Gender"
     @State private var age: String = ""
+    @State private var address: String = ""
+    @State private var contactNumber: String = ""
+    @State private var emergencyContact: String = ""
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var errorMessage = ""
+    @State private var selectedImage: UIImage?
+    @State private var showImagePicker = false
+    @State private var imagePickerSourceType: UIImagePickerController.SourceType = .photoLibrary
     @State private var isLoggedIn = false
     @Environment(\.presentationMode) var presentationMode
     
-    let genders = ["Male", "Female", "Other"]
+    let genders = ["Select Gender","Male", "Female", "Other"]
     
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 Spacer()
                 
-                // Illustration
-                Image("CreateAccount")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 211, height: 170)
-                    .padding(.bottom, 50)
+                // Profile Photo
+                if let selectedImage = selectedImage {
+                    Image(uiImage: selectedImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 100, height: 100)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.gray, lineWidth: 2))
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.gray)
+                }
+                Button(action: {
+                    self.showImagePicker = true
+                    self.imagePickerSourceType = .photoLibrary
+                }) {
+                    Text("Select Photo")
+                        .foregroundColor(.blue)
+                }
+                .padding(.bottom, 20)
+                .sheet(isPresented: $showImagePicker) {
+                    ImagePicker(selectedImage: $selectedImage, sourceType: self.imagePickerSourceType)
+                }
                 
                 // First Name Field
                 TextFieldWithValidation(title: "First Name", text: $firstName, errorMessage: errorMessage(for: .firstName))
@@ -78,15 +102,40 @@ struct CreateAccountView: View {
                 TextFieldWithValidation(title: "Last Name", text: $lastName, errorMessage: errorMessage(for: .lastName))
                 
                 // Gender Field
-                Picker(selection: $gender, label: Text("Gender")) {
-                    ForEach(genders, id: \.self) {
-                        Text($0)
-                    }
-                }
-                .pickerStyle(MenuPickerStyle())
-                
+                HStack {
+                                   
+                                    Text("Gender").padding(20)
+                                    Spacer()
+                                    Picker(selection: $gender, label: Text("Gender")) {
+                                        ForEach(genders, id: \.self) {
+                                            Text($0)
+                                        }
+                                    }
+                                    .pickerStyle(MenuPickerStyle())
+                                }
+                .background(RoundedRectangle(cornerRadius: 10).stroke(Color.gray))
+                .padding(.horizontal)
+
                 // Age Field
                 TextFieldWithValidation(title: "Age", text: $age, errorMessage: errorMessage(for: .age))
+                    .keyboardType(.numberPad)
+                
+                // Address Field
+                TextFieldWithValidation(title: "Address", text: $address, errorMessage: errorMessage(for: .address))
+                
+                // Contact Number Field
+                TextFieldWithValidation(title: "Contact Number", text: $contactNumber, errorMessage: errorMessage(for: .contactNumber))
+                    .keyboardType(.numberPad)
+                    .onChange(of: contactNumber) { newValue in
+                        if newValue.count > 10 {
+                            errorMessage = "Contact number cannot exceed 10 digits"
+                        } else {
+                            errorMessage = ""
+                        }
+                    }
+                
+                // Emergency contact number Field
+                TextFieldWithValidation(title: "Emergency Contact Number", text: $emergencyContact, errorMessage: errorMessage(for: .emergencyContact))
                     .keyboardType(.numberPad)
                 
                 // Email Field
@@ -113,41 +162,18 @@ struct CreateAccountView: View {
                     
                     if !errorMessage.isEmpty {
                         Text(errorMessage)
-                            .foregroundColor(.red)
+                            .foregroundColor(.gray)
                             .font(.caption)
                             .padding(.horizontal)
                     }
                 }
-                NavigationLink(destination:LogInView(),isActive: $isLoggedIn){
-                    EmptyView()
-                }
+                
                 // Sign Up Button
                 Button(action: {
                     // Handle Sign Up
                     errorMessage = validateFields()
                     if errorMessage.isEmpty {
-                        let db = Firestore.firestore()
-                        do{
-                            Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-                                if let error = error {
-                                    print("Error: \(error.localizedDescription)")
-                                } else {
-                                    if let authResult = authResult {
-                                        let userID = authResult.user.uid
-                                        let newPatient = Patient(id: "\(userID)", FirstName:firstName, LastName: lastName, image: "", dob: Date.now, gender: gender, contactNumber:"" , email: email, address: "", emergencyContact: "", upcomingAppointments: [], previousDoctors: [])
-                                        let PatientData = newPatient.toDictionary()
-                                        do {
-                                            try db.collection("Patient").document(userID).setData(PatientData)
-                                            db.collection("All Users").document(newPatient.email).setData(["Patient": 1])
-                                            currentuser = newPatient
-                                            isLoggedIn = true
-                                        } catch {
-                                            print("Error setting patient data: \(error.localizedDescription)")
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        createAccount()
                     }
                 }) {
                     Text("Create Account")
@@ -178,17 +204,22 @@ struct CreateAccountView: View {
     }
     
     private enum Field {
-        case firstName, lastName, age, email
+        case firstName, lastName, age, address, contactNumber, emergencyContact, email
         
         var title: String {
             switch self {
             case .firstName: return "First Name"
             case .lastName: return "Last Name"
             case .age: return "Age"
+            case .address: return "Address"
+            case .contactNumber: return "Contact Number"
+            case .emergencyContact: return "Emergency Contact Number"
             case .email: return "Email ID"
             }
         }
     }
+    
+    
     
     private func validateFields() -> String {
         var errorMessages = [String]()
@@ -203,8 +234,7 @@ struct CreateAccountView: View {
             errorMessages.append("Last name is required")
         } else if !isValidName(lastName) {
             errorMessages.append("Enter a valid last name")
-        }
-        if firstName.lowercased() == lastName.lowercased() {
+        } else if firstName.lowercased() == lastName.lowercased() {
             errorMessages.append("First name and last name cannot be the same")
         }
         
@@ -212,6 +242,26 @@ struct CreateAccountView: View {
             errorMessages.append("Age is required")
         } else if !isValidAge(age) {
             errorMessages.append("Enter a valid age")
+        } else if let ageInt = Int(age), ageInt < 15 {
+            errorMessages.append("Age must be at least 15 years old")
+        }
+        
+        if address.isEmpty {
+            errorMessages.append("Address is required")
+        }
+        
+        if contactNumber.isEmpty {
+            errorMessages.append("Contact number is required")
+        } else if !isValidPhoneNumber(contactNumber) {
+            errorMessages.append("Enter a valid 10-digit contact number")
+        }
+        
+        if emergencyContact.isEmpty {
+            errorMessages.append("Emergency contact number is required")
+        } else if !isValidPhoneNumber(emergencyContact) {
+            errorMessages.append("Enter a valid 10-digit emergency contact number")
+        } else if contactNumber == emergencyContact {
+            errorMessages.append("Emergency contact number should be different from contact number")
         }
         
         if email.isEmpty {
@@ -229,93 +279,17 @@ struct CreateAccountView: View {
         return errorMessages.joined(separator: "\n")
     }
     
-    private func isValidName(_ name: String) -> Bool {
-        let nameRegEx = "^[a-zA-Z]+$"  // Only allow alphabetic characters
-        let namePred = NSPredicate(format: "SELF MATCHES %@", nameRegEx)
-        return namePred.evaluate(with: name) && !name.contains(".") && !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
-    
-    private func isValidAge(_ age: String) -> Bool {
-        let ageRegEx = "^[0-9]+$"  // Only allow numeric characters
-        let agePred = NSPredicate(format: "SELF MATCHES %@", ageRegEx)
-        return agePred.evaluate(with: age)
-    }
-    
-    private func isValidEmail(_ email: String) -> Bool {
-        // Ensure the email is not empty and does not contain spaces
-        guard !email.isEmpty, !email.contains(" "), email.count <= 320 else {
-            return false
-        }
-        
-        // Ensure the email contains exactly one '@' symbol
-        let emailParts = email.split(separator: "@")
-        guard emailParts.count == 2 else {
-            return false
-        }
-        
-        let localPart = emailParts[0]
-        let domainPart = emailParts[1]
-        
-        // Ensure local part is not empty and does not exceed 64 characters
-        guard !localPart.isEmpty, localPart.count <= 64 else {
-            return false
-        }
-        
-        // Ensure no consecutive dots in local or domain part, and no leading/trailing dots
-        guard !localPart.contains(".."), !domainPart.contains(".."),
-              !localPart.hasPrefix("."), !localPart.hasSuffix("."),
-              !domainPart.hasPrefix("."), !domainPart.hasSuffix(".") else {
-            return false
-        }
-        
-        // Ensure the email starts with a lowercase letter
-        guard localPart.first?.isLowercase == true else {
-            return false
-        }
-        
-        // Ensure the email conforms to valid character rules
-        let localPartRegEx = "^[a-zA-Z0-9._%+-]+$"
-        let localPartTest = NSPredicate(format: "SELF MATCHES %@", localPartRegEx)
-        guard localPartTest.evaluate(with: String(localPart)) else {
-            return false
-        }
-        
-        // Ensure the domain is one of the specified valid domains (e.g., gmail.com, yahoo.com)
-        let validDomains = ["gmail.com", "yahoo.com", ".in", ".co", ".net", ".in","apple.co"] // Add more domains as needed
-        guard validDomains.contains(domainPart.lowercased()) else {
-            return false
-        }
-        
-        return true
-    }
-
-    
-    
-    
-    private func passwordValidationError(_ password: String) -> String? {
-        if password.count < 8 {
-            return "Password must be at least 8 characters long"
-        } else if !password.contains(where: { $0.isUppercase }) {
-            return "Password must contain at least one uppercase letter"
-        } else if !password.contains(where: { $0.isNumber }) {
-            return "Password must contain at least one number"
-        } else if !password.contains(where: { "!@#$%&*".contains($0) }) {
-            return "Password must contain at least one special character"
-        }
-        return nil
-    }
-    
     private func errorMessage(for field: Field) -> String {
         switch field {
         case .firstName:
             if firstName.isEmpty {
-                return "First name is required"
+                return ""
             } else if !isValidName(firstName) {
                 return "Enter a valid first name"
             }
         case .lastName:
             if lastName.isEmpty {
-                return "Last name is required"
+                return ""
             } else if !isValidName(lastName) {
                 return "Enter a valid last name"
             } else if firstName.lowercased() == lastName.lowercased() {
@@ -323,13 +297,33 @@ struct CreateAccountView: View {
             }
         case .age:
             if age.isEmpty {
-                return "Age is required"
+                return ""
             } else if !isValidAge(age) {
                 return "Enter a valid age"
+            } else if let ageInt = Int(age), ageInt < 15 {
+                return "Age must be at least 15 years old"
+            }
+        case .address:
+            if address.isEmpty {
+                return ""
+            }
+        case .contactNumber:
+            if contactNumber.isEmpty {
+                return ""
+            } else if !isValidPhoneNumber(contactNumber) {
+                return "Enter a valid 10-digit contact number"
+            }
+        case .emergencyContact:
+            if emergencyContact.isEmpty {
+                return ""
+            } else if !isValidPhoneNumber(emergencyContact) {
+                return "Enter a valid 10-digit emergency contact number"
+            } else if contactNumber == emergencyContact {
+                return "Emergency contact number should be different from contact number"
             }
         case .email:
             if email.isEmpty {
-                return "Email is required"
+                return ""
             } else if !isValidEmail(email) {
                 return "Enter a valid email address"
             }
@@ -337,43 +331,146 @@ struct CreateAccountView: View {
         return ""
     }
     
-    
-    struct CreateAccountView_Previews: PreviewProvider {
-        static var previews: some View {
-            CreateAccountView()
-        }
+    private func isValidName(_ name: String) -> Bool {
+        let nameRegex = "^[a-zA-Z]+(?:\\s[a-zA-Z]+)?$"
+        let namePredicate = NSPredicate(format: "SELF MATCHES %@", nameRegex)
+        return namePredicate.evaluate(with: name)
     }
     
-    struct TextFieldWithValidation: View {
-        let title: String
-        @Binding var text: String
-        let errorMessage: String
-        @State private var isEditing: Bool = false // Track editing state
+    private func isValidAge(_ age: String) -> Bool {
+        let ageRegex = "^[0-9]+$"
+        let agePredicate = NSPredicate(format: "SELF MATCHES %@", ageRegex)
+        return agePredicate.evaluate(with: age)
+    }
+    
+    private func isValidPhoneNumber(_ phoneNumber: String) -> Bool {
+        let phoneRegex = "^\\d{10}$"
+        let phonePredicate = NSPredicate(format: "SELF MATCHES %@", phoneRegex)
+        return phonePredicate.evaluate(with: phoneNumber)
+    }
+    
+    private func isValidEmail(_ email: String) -> Bool {
+        let emailRegex = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        return emailPredicate.evaluate(with: email)
+    }
+    
+    private func passwordValidationError(_ password: String) -> String? {
+        // Regular expression to check for at least one lowercase letter, one uppercase letter, one digit, and one special character
+        let passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%?&])[A-Za-z\\d@$!%?&]{8,}$"
+        let passwordPredicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
         
-        var body: some View {
-            VStack(alignment: .leading) {
-                HStack {
-                    Image(systemName: "person")
-                        .foregroundColor(.gray)
-                    TextField(title, text: $text, onEditingChanged: { editing in
-                        self.isEditing = editing
-                    })
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .padding(.horizontal)
+        if password.count < 8 {
+            return "Password must be at least 8 characters long"
+        } else if !passwordPredicate.evaluate(with: password) {
+            return "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+        }
+        return nil
+    }
+
+    
+    private func createAccount() {
+        guard let selectedImage = selectedImage else {
+            errorMessage = "Please select a profile photo"
+            return
+        }
+        
+        // Upload image to Firebase Storage
+        let imageName = UUID().uuidString
+        let storageRef = Storage.storage().reference().child("profile_images/\(imageName).jpg")
+        
+        if let imageData = selectedImage.jpegData(compressionQuality: 0.8) {
+            storageRef.putData(imageData, metadata: nil) { metadata, error in
+                if let error = error {
+                    self.errorMessage = "Error uploading image: \(error.localizedDescription)"
+                    return
                 }
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 10).stroke(Color.gray))
-                .padding(.horizontal)
                 
-                if isEditing && !errorMessage.isEmpty { // Show error only if editing and error message exists
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .font(.caption)
-                        .padding(.horizontal)
+                storageRef.downloadURL { url, error in
+                    if let error = error {
+                        self.errorMessage = "Error fetching download URL: \(error.localizedDescription)"
+                        return
+                    }
+                    
+                    guard let downloadURL = url else {
+                        self.errorMessage = "Failed to fetch download URL"
+                        return
+                    }
+                    
+                    let profileImageUrl = downloadURL.absoluteString
+                    
+                    // Create the user account in Firebase Authentication
+                    Auth.auth().createUser(withEmail: self.email, password: self.password) { authResult, error in
+                        if let error = error {
+                            self.errorMessage = "Error creating user: \(error.localizedDescription)"
+                            return
+                        }
+                        
+                        guard let user = authResult?.user else {
+                            self.errorMessage = "Failed to retrieve user"
+                            return
+                        }
+                        
+                        // Save user details in Firestore
+                        let db = Firestore.firestore()
+                        db.collection("Patient").document(user.uid).setData([
+                            "firstname": self.firstName,
+                            "lastname": self.lastName,
+                            "gender": self.gender,
+                            "age": self.age,
+                            "address": self.address,
+                            "contactNumber": self.contactNumber,
+                            "emergencyContact": self.emergencyContact,
+                            "email": self.email,
+                            "imageURL": profileImageUrl
+                        ]) { error in
+                            if let error = error {
+                                self.errorMessage = "Error saving user details: \(error.localizedDescription)"
+                                return
+                            }
+                            
+                            // Account creation successful
+                            self.alertMessage = "Account created successfully"
+                            self.showAlert = true
+                        }
+                    }
                 }
+            }
+        } else {
+            errorMessage = "Failed to convert image to data"
+        }
+    }
+}
+
+struct TextFieldWithValidation: View {
+    let title: String
+    @Binding var text: String
+    var errorMessage: String
+    @State private var showingError = false
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            TextField(title, text: $text) { isEditing in
+                if isEditing {
+                    showingError = true
+                }
+            }
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 10).stroke(Color.gray))
+            .padding(.horizontal)
+            
+            if showingError && !errorMessage.isEmpty {
+                Text(errorMessage)
+                    .foregroundColor(.gray)
+                    .font(.caption)
+                    .padding(.horizontal)
             }
         }
     }
-    
+}
+
+struct CreateAccountView_Previews: PreviewProvider {
+    static var previews: some View {
+        CreateAccountView()
+    }
 }

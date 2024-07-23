@@ -10,8 +10,9 @@ import FirebaseFirestore
 import FirebaseStorage
 import SwiftUI
 
-var currentuser: Patient = Patient(id: "", FirstName:"", LastName: "", image: "", dob: Date.now, gender: "", contactNumber: "", email: "", address: "", emergencyContact: "", upcomingAppointments: [], previousDoctors: [])
+var currentuser: Patient = Patient(id: "", firstname:"", lastname: "", imageURL: "", dob: Date.now, gender: "", contactNumber: "", email: "", address: "", emergencyContact: "", upcomingAppointments: [], previousDoctors: [])
 
+var newAppointements:[Appointment] = []
 class DataController{
     
     static var shared = DataController() // Singleton instance
@@ -132,7 +133,7 @@ class DataController{
                             self.labId.append(id)
                             
                             
-                            print(self.labTests)
+//                            print(self.labTests)
                         }else{
                             print("Conversion failed")
                         }
@@ -148,41 +149,7 @@ class DataController{
         }
     }
     private func loadData(){
-//        let d1 = Doctor(id: "D1", name: "Dr. Alice Smith",image: "", department: .general, yearsOfExperience: 15, availableSlots: AppointmentSlot(startTime: Date.now, endTime: Date.now) , profile: DoctorProfile(medicalId:"ssxcs",  qualifications: "MBBS, MD", contactInfo: "alice.smith@example.com",email: "",address: "",gender: "",DOB: Date.now, schedule: [.monday,.friday,.thursday], appointmentPrice: 100), status: false)
-//        
-//        let d2 = Doctor(id: "D1", name: "Dr. Alice Smith",image: "", department: .general, yearsOfExperience: 15, availableSlots: AppointmentSlot(startTime: Date.now, endTime: Date.now), profile: DoctorProfile(medicalId:"ssxcs",  qualifications: "MBBS, MD", contactInfo: "alice.smith@example.com",email: "",address: "",gender: "",DOB: Date.now, schedule: [.monday,.friday,.thursday], appointmentPrice: 100), status: false)
-//        
-//        let d3 = Doctor(id: "D1", name: "Dr. Alice Smith",image: "", department: .general, yearsOfExperience: 15, availableSlots: AppointmentSlot(startTime: Date.now, endTime: Date.now), profile: DoctorProfile(medicalId:"ssxcs",  qualifications: "MBBS, MD", contactInfo: "alice.smith@example.com",email: "",address: "",gender: "",DOB: Date.now, schedule: [.monday,.friday,.thursday], appointmentPrice: 100), status: false)
-//        let d4 = Doctor(id: "D1", name: "Dr. Alice Smith",image: "", department: .general, yearsOfExperience: 15, availableSlots: AppointmentSlot(startTime: Date.now, endTime: Date.now), profile: DoctorProfile(medicalId:"ssxcs",  qualifications: "MBBS, MD", contactInfo: "alice.smith@example.com",email: "",address: "",gender: "",DOB: Date.now, schedule: [.monday,.friday,.thursday], appointmentPrice: 100), status: false)
-//        
-//        let d5 = Doctor(id: "D1", name: "Dr. Alice Smith",image: "", department: .general, yearsOfExperience: 15, availableSlots: AppointmentSlot(startTime: Date.now, endTime: Date.now), profile: DoctorProfile(medicalId:"ssxcs",  qualifications: "MBBS, MD", contactInfo: "alice.smith@example.com",email: "",address: "",gender: "",DOB: Date.now, schedule: [.monday,.friday,.thursday], appointmentPrice: 100), status: false)
-//        
-//        let d6 = Doctor(id: "D1", name: "Dr. Alice Smith",image: "", department: .general, yearsOfExperience: 15, availableSlots: AppointmentSlot(startTime: Date.now, endTime: Date.now), profile: DoctorProfile(medicalId:"ssxcs",  qualifications: "MBBS, MD", contactInfo: "alice.smith@example.com",email: "",address: "",gender: "",DOB: Date.now, schedule: [.monday,.friday,.thursday], appointmentPrice: 100), status: false)
-//        
-//        let d7 = Doctor(id: "D1", name: "Dr. Alice Smith",image: "", department: .general, yearsOfExperience: 15, availableSlots: AppointmentSlot(startTime: Date.now, endTime: Date.now), profile: DoctorProfile(medicalId:"ssxcs",  qualifications: "MBBS, MD", contactInfo: "alice.smith@example.com",email: "",address: "",gender: "",DOB: Date.now, schedule: [.monday,.friday,.thursday], appointmentPrice: 100), status: false)
-//        
-//        let d8 = Doctor(id: "D1", name: "Dr. Alice Smith",image: "", department: .general, yearsOfExperience: 15, availableSlots: AppointmentSlot(startTime: Date.now, endTime: Date.now), profile: DoctorProfile(medicalId:"ssxcs",  qualifications: "MBBS, MD", contactInfo: "alice.smith@example.com",email: "",address: "",gender: "",DOB: Date.now, schedule: [.monday,.friday,.thursday], appointmentPrice: 100), status: false)
-//        
-//        let d9 = Doctor(id: "D1", name: "Dr. Alice Smith",image: "", department: .general, yearsOfExperience: 15, availableSlots: AppointmentSlot(startTime: Date.now, endTime: Date.now), profile: DoctorProfile(medicalId:"ssxcs",  qualifications: "MBBS, MD", contactInfo: "alice.smith@example.com",email: "",address: "",gender: "",DOB: Date.now, schedule: [.monday,.friday,.thursday], appointmentPrice: 100), status: false)
-//        
-//        let d10 = Doctor(id: "D1", name: "Dr. Alice Smith",image: "", department: .general, yearsOfExperience: 15, availableSlots: AppointmentSlot(startTime: Date.now, endTime: Date.now), profile: DoctorProfile(medicalId:"ssxcs",  qualifications: "MBBS, MD", contactInfo: "alice.smith@example.com",email: "",address: "",gender: "",DOB: Date.now, schedule: [.monday,.friday,.thursday], appointmentPrice: 100), status: false)
-//    
-//    
-//        setDoc(doc: d1)
-//        setDoc(doc: d2)
-//        setDoc(doc: d3)
-//        setDoc(doc: d4)
-//        setDoc(doc: d5)
-//        setDoc(doc: d6)
-//        setDoc(doc: d7)
-//        setDoc(doc: d8)
-//        setDoc(doc: d9)
-//        setDoc(doc: d10)
-//        print(allDoctors)
-//        print(Doctors)
-//        
-//    print(allDoctors)
-//    print(Doctors)
+
     }
         
     

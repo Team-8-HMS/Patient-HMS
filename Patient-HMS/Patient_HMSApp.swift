@@ -6,7 +6,8 @@
 //
 
 import SwiftUI
-import Firebase
+import FirebaseCore
+import FirebaseAuth
 
 @main
 struct Patient_HMSApp: App {
